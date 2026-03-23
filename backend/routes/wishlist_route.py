@@ -1,9 +1,7 @@
-from dotenv import load_dotenv
 from typing import List
 import uuid
 from fastapi import APIRouter, HTTPException, Body, Depends, Header, Request
 from logic.item.item_service import ItemService
-from logic.item.item_instance import get_item_instance
 from logic.exceptions import ItemAlreadyExistsError, ItemNotFoundError, UpdateFailedError, FailedToAddItemError
 
 #--- IMPORT MODELS ---
@@ -12,8 +10,11 @@ from models.items.getWishlistItemResponce import GetWishlistItemResponse
 from models.items.updateWishlistItemRequest import UpdateWishlistItemRequest
 #--- END OF MODEL IMPORTS ---
 
-load_dotenv()
 router = APIRouter()
+
+def get_item_instance(request: Request) -> ItemService:
+    return request.app.state.item_service
+
 
 @router.post("/add_item")
 async def add_wishlist_item(request: AddWishlistItemRequest, logic: ItemService = Depends(get_item_instance)):

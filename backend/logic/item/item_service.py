@@ -1,18 +1,12 @@
 from logic.exceptions import ItemNotFoundError, UpdateFailedError, ItemAlreadyExistsError, FailedToAddItemError
 
-from database import Database
+from repository.wishlistItem_repository import WishlistItemRepository
 from models.items.addWishlistItemRequest import AddWishlistItemRequest
 from models.items.updateWishlistItemRequest import UpdateWishlistItemRequest
 
 class ItemService:
-    def __init__(self, db: Database):
+    def __init__(self, db: WishlistItemRepository):
         self.db = db
-
-    @classmethod
-    async def create(cls):
-        db = Database()
-        await db.init_client()
-        return cls(db)
 
     async def get_all_user_items(self, user_id) -> list[dict]:
         items =await self.db.fetch_user_wishlist_items(user_id=user_id)
