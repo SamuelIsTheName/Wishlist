@@ -13,3 +13,19 @@ class UpdateFailedError(Exception):
 class FailedToAddItemError(Exception):
     """Raised when adding a wishlist item fails."""
     pass
+
+class FailedToRegisterError(Exception):
+    """Raised when user registration fails."""
+    pass
+
+class UserAlreadyExistsError(Exception):
+    """Raised when attempting to register a user that already exists."""
+    pass 
+
+class UserNotFoundError(Exception):
+    """Raised when a user is not found."""
+    pass
+
+class InvalidCredentialsError(Exception):
+    """Raised when user login fails due to invalid credentials."""
+    pass

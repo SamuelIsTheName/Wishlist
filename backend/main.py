@@ -1,11 +1,20 @@
 from fastapi import FastAPI
 from database import Database
-from logic.item.item_service import ItemService
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# --- Wishlist Item Imports ---
+from logic.item.item_service import ItemService
 from repository.wishlistItem_repository import WishlistItemRepository
 from routes.wishlist_route import router as wishlist_router
-from fastapi.middleware.cors import CORSMiddleware
 
+# --- Auth Imports ---
+from logic.auth.auth_service import AuthService
+from repository.auth_repository import AuthRepository
+from routes.auth_route import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,9 +24,15 @@ async def lifespan(app: FastAPI):
     wishlist_item_repository = WishlistItemRepository(db)
     item_service = ItemService(wishlist_item_repository)
 
+    auth_repository = AuthRepository(db)
+    auth_service = AuthService(auth_repository)
+
     app.state.item_service = item_service 
+    app.state.auth_service = auth_service
 
     yield
+
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="Wishlist API", lifespan=lifespan)
 
@@ -29,6 +44,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(wishlist_router, prefix="/wishlist", tags=["Items"])
+app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 if __name__ == "__main__":
     import uvicorn
