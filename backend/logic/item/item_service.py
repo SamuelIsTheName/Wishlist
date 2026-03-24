@@ -22,10 +22,10 @@ class ItemService:
         return items
 
 
-    async def create_item(self, request: AddWishlistItemRequest) -> dict:
+    async def create_item(self, user_id: str, request: AddWishlistItemRequest) -> dict:
         try:
             new_item = await self.db.add_wishlist_item(
-                user_id=request.user_id,
+                user_id=user_id,
                 item_name=request.item_name,
                 item_url=request.item_url,
                 note=request.note
@@ -36,8 +36,8 @@ class ItemService:
         except FailedToAddItemError:
             raise FailedToAddItemError()
 
-    async def update_item(self, request: UpdateWishlistItemRequest):
-        item = await self.get_specific_item(request.user_id, request.item_id)
+    async def update_item(self, user_id: str, request: UpdateWishlistItemRequest):
+        item = await self.get_specific_item(user_id, request.item_id)
         if not item:
             raise ItemNotFoundError()
 
