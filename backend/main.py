@@ -1,3 +1,15 @@
+"""from database import Database
+async def main():
+    db = Database()
+    await db.init_client()
+    items = await db.fetch_user_wishlist_items(user_id="30180b66-6168-4d50-bed2-ed4c480b967e")
+    print(items)
+    
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())"""
+
+
 from fastapi import FastAPI
 from database import Database
 from contextlib import asynccontextmanager

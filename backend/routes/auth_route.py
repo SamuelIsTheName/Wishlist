@@ -16,8 +16,8 @@ def get_auth_instance(request: Request) -> AuthService:
 @limiter.limit("5/minute")
 async def register_user(request: Request, body: RegisterRequest, auth: AuthService = Depends(get_auth_instance)):
     try:
-        user = await auth.register_user(email=body.email, password=body.password)
-        return {"message": "User registered successfully", "user_id": user['id']}
+        token = await auth.register_user(email=body.email, password=body.password)
+        return {"access_token": token, "token_type": "bearer"}
     except UserAlreadyExistsError:
         raise HTTPException(status_code=409, detail="Email already registered")
     except FailedToRegisterError:

@@ -52,7 +52,8 @@ class AuthService:
         email = email.lower().strip()
         hashed_password = self.hash_password(password)
         user = await self.db.register_user(email=email, hashed_password=hashed_password)
-        return user
+        token = self.generate_token(user_id=user['id'])
+        return token
     
     async def login_user(self, email: str, plain_password: str) -> str:
         email = email.lower().strip()
